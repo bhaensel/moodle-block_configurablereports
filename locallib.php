@@ -266,7 +266,7 @@ function cr_print_table($table, $return = false) {
     }
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
-    $output .= '<form action="send_emails.php" method="post" id="sendemail">';
+    //$output .= '<form action="send_emails.php" method="post" id="sendemail">';
     $output .= '<table width="'.$table->width.'" ';
     if (!empty($table->summary)) {
         $output .= " summary=\"$table->summary\"";
