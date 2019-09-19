@@ -96,15 +96,18 @@ class customsql_form extends moodleform {
         $sql = trim($sql);
 
         // Simple test to avoid evil stuff in the SQL.
-        $regex = '/\b(ALTER|CREATE|DELETE|DROP|GRANT|INSERT|INTO|TRUNCATE|UPDATE|SET|VACUUM|REINDEX|DISCARD|LOCK)\b/i';
+        $regex = '/\b(ALTER|CREATE|DISCARD|LOCK)\b/i';
         if (preg_match($regex, $sql)) {
             $errors['querysql'] = get_string('notallowedwords', 'block_configurable_reports');
 
-        } else if (strpos($sql, ';') !== false) {
+        }
+		//else if (strpos($sql, ';') !== false) {
             // Do not allow any semicolons.
-            $errors['querysql'] = get_string('nosemicolon', 'report_customsql');
+        //    $errors['querysql'] = get_string('nosemicolon', 'report_customsql');
 
-        } else if ($CFG->prefix != '' && preg_match('/\b' . $CFG->prefix . '\w+/i', $sql)) {
+        //} 
+		
+		else if ($CFG->prefix != '' && preg_match('/\b' . $CFG->prefix . '\w+/i', $sql)) {
             // Make sure prefix is prefix_, not explicit.
             $errors['querysql'] = get_string('noexplicitprefix', 'block_configurable_reports');
 
@@ -143,7 +146,7 @@ class customsql_form extends moodleform {
         if (empty($this->_customdata['report']->runstatistics) OR $this->_customdata['report']->runstatistics == 0) {
             // Simple test to avoid evil stuff in the SQL.
             // Allow cron SQL queries to run CREATE|INSERT|INTO queries.
-            if (preg_match('/\b(ALTER|DELETE|DROP|GRANT|TRUNCATE|UPDATE|SET|VACUUM|REINDEX|DISCARD|LOCK)\b/i', $sql)) {
+            if (preg_match('/\b(ALTER|DROP|LOCK)\b/i', $sql)) {
                 $errors['querysql'] = get_string('notallowedwords', 'block_configurable_reports');
             }
         } else {
