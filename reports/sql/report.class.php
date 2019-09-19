@@ -53,7 +53,7 @@ class report_sql extends report_base {
         $sql = str_replace('%%WWWROOT%%', $CFG->wwwroot, $sql);
         $sql = preg_replace('/%{2}[^%]+%{2}/i', '', $sql);
 
-        $sql = str_replace('?', '[[QUESTIONMARK]]', $sql);
+        $sql = str_replace('?', '&#63;', $sql);
 
         return $sql;
     }
@@ -70,10 +70,15 @@ class report_sql extends report_base {
 
         $starttime = microtime(true);
 
-        if (preg_match('/\b(INSERT|INTO|CREATE)\b/i', $sql)) {
+        if (preg_match('/\b(INSERT|INTO|SET|CREATE)\b/i', $sql)) {
             // Run special (dangerous) queries directly.
             $results = $remotedb->execute($sql);
-        } else {
+        } 
+		if (preg_match('/(^UPDATE)/i', $sql)) {
+			// Executes update queries.
+			$results = $remotedb->execute($sql);
+		}
+		else {
             $results = $remotedb->get_recordset_sql($sql, null, 0, $reportlimit);
         }
 
@@ -129,7 +134,7 @@ class report_sql extends report_base {
                     $arrayrow = array_values((array) $row);
                     foreach ($arrayrow as $ii => $cell) {
                         $cell = format_text($cell, FORMAT_HTML, array('trusted' => true, 'noclean' => true, 'para' => false));
-                        $arrayrow[$ii] = str_replace('[[QUESTIONMARK]]', '?', $cell);
+                        $arrayrow[$ii] = str_replace('&#63;', '?', $cell);
                     }
                     $totalrecords++;
                     $finaltable[] = $arrayrow;
